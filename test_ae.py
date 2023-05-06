@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
 class Encoder(nn.Module):
     def __init__(self, latent_dims):
         super(Encoder, self).__init__()

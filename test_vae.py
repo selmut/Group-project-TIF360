@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 from test_ae import Decoder
 
+# Reference: https://avandekleut.github.io/vae/
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
