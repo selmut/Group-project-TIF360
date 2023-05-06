@@ -62,7 +62,7 @@ vae = VariationalAutoencoder(latent_dims).to(device)  # GPU
 
 print('Loading data...')
 data = torch.utils.data.DataLoader(
-        torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
+        torchvision.datasets.FashionMNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
         batch_size=128, shuffle=True)
 
 print('\nTraining variational autoencoder...\n')

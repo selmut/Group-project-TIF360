@@ -7,8 +7,9 @@ import torchvision
 import numpy as np
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# Reference: https://avandekleut.github.io/vae/
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class Encoder(nn.Module):
     def __init__(self, latent_dims):
@@ -65,7 +66,7 @@ autoencoder = Autoencoder(latent_dims).to(device)  # GPU
 
 print('Loading data...')
 data = torch.utils.data.DataLoader(
-        torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
+        torchvision.datasets.FashionMNIST('./data', transform=torchvision.transforms.ToTensor(), download=True),
         batch_size=128, shuffle=True)
 
 print('\nTraining autoencoder...\n')
