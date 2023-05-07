@@ -34,6 +34,8 @@ data = torch.utils.data.DataLoader(
         torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
         batch_size=128, shuffle=True)
 
+print(data)
+
 print('\nTraining variational autoencoder...\n')
 vae = train_vae(vae, data)
 torch.save(vae, 'models/variational_autoencoder.pt')
@@ -45,19 +47,18 @@ U = torch.distributions.Uniform(-3, 3)
 
 for i in range(100):
     # point = vae.encoder.mu[-1] + vae.encoder.sigma[-1]*N.sample([latent_dims])
-    x1 = U.sample()
-    x2 = U.sample()
-
-    z = torch.Tensor([x1, x2])
+    point = U.sample(sample_shape=[latent_dims])
+    z = torch.Tensor(point)
     x_hat = vae.decoder(z)
     x_hat = x_hat.reshape((28, 28)).detach().numpy()
     plt.figure()
     plt.imshow(x_hat[:, :], cmap='Greys')
+    plt.title(f'Sampled point = {[np.round(x, 4) for x in list(point.detach().numpy())]}')
     plt.savefig(f'img/digits/{i}.png')
     plt.close()
 
-plots.plot_latent(vae, data)
-plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
+# plots.plot_latent(vae, data)
+# plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
 
 
 
