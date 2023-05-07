@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 import numpy as np
-import torch; torch.manual_seed(0)
+import torch#; torch.manual_seed(0)
 
 
 def plot_reconstructed(autoencoder, r0=(-5, 10), r1=(-10, 5), n=12):
@@ -11,7 +11,7 @@ def plot_reconstructed(autoencoder, r0=(-5, 10), r1=(-10, 5), n=12):
         for j, x in enumerate(np.linspace(*r0, n)):
             z = torch.Tensor([[x, y]])
             x_hat = autoencoder.decoder(z)
-            x_hat = x_hat.reshape(28, 28).to('cpu').detach().numpy()
+            x_hat = x_hat.reshape(28, 28).detach().numpy()
             img[(n-1-i)*w:(n-1-i+1)*w, j*w:(j+1)*w] = x_hat
     plt.imshow(img, extent=[*r0, *r1])
     plt.savefig('img/rec_vae.png')

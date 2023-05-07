@@ -1,4 +1,4 @@
-import torch; torch.manual_seed(0)
+import torch#; torch.manual_seed(0)
 from aeClass import Decoder
 
 
@@ -10,17 +10,19 @@ class VariationalEncoder(torch.nn.Module):
         self.linear3 = torch.nn.Linear(512, latent_dims)
 
         self.N = torch.distributions.Normal(0, 1)
-        self.N.loc = self.N.loc  # .cuda()  # hack to get sampling on the GPU
-        self.N.scale = self.N.scale  # .cuda()
+        self.N_fit = torch.distributions.Normal(0, 1)
+        self.mu = 0
+        self.sigma = 1
         self.kl = 0
 
     def forward(self, x):
         x = torch.flatten(x, start_dim=1)
         x = torch.nn.functional.relu(self.linear1(x))
-        mu = self.linear2(x)
-        sigma = torch.exp(self.linear3(x))
-        z = mu + sigma*self.N.sample(mu.shape)
-        self.kl = (sigma**2 + mu**2 - torch.log(sigma) - 1/2).sum()
+        self.mu = self.linear2(x)
+        self.sigma = torch.exp(self.linear3(x))
+        z = self.mu + self.sigma*self.N.sample(self.mu.shape)
+        self.kl = (self.sigma**2 + self.mu**2 - torch.log(self.sigma) - 1/2).sum()
+        self.N_fit = torch.distributions.Normal(self.mu[-1], self.sigma[-1])
         return z
 
 

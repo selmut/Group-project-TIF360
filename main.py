@@ -5,6 +5,8 @@ import torchvision
 import numpy as np
 import plots
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
+import seaborn as sns
+
 from vaeClass import VariationalAutoencoder
 
 # Reference: https://avandekleut.github.io/vae/
@@ -20,7 +22,7 @@ def train_vae(autoencoder, data, epochs=20):
             loss.backward()
             opt.step()
 
-        print(f'Epoch nr. {epoch + 1}/{epochs} --- Current training loss: {loss:.4f}')
+        print(f'Epoch nr. {epoch+1:02d}/{epochs} --- Current training loss: {loss:.4f}')
     return autoencoder
 
 
@@ -34,8 +36,24 @@ data = torch.utils.data.DataLoader(
 
 print('\nTraining variational autoencoder...\n')
 vae = train_vae(vae, data)
+torch.save(vae, 'models/variational_autoencoder.pt')
 
+N = vae.encoder.N
+N_fit = vae.encoder.N_fit
+
+for i in range(100):
+    point = vae.encoder.mu[-1] + vae.encoder.sigma[-1]*N.sample([latent_dims])
+    z = torch.Tensor(point)
+    x_hat = vae.decoder(z)
+    x_hat = x_hat.reshape((28, 28)).detach().numpy()
+    plt.figure()
+    plt.imshow(x_hat[:, :], cmap='Greys')
+    plt.savefig(f'img/digits/{i}.png')
+    plt.close()
 
 plots.plot_latent(vae, data)
 plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
+
+
+
 
