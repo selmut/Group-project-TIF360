@@ -49,7 +49,7 @@ N_fit = vae.encoder.N_fit
 
 U = torch.distributions.Uniform(-3, 3)
 
-for i in range(100):
+'''for i in range(100):
     # point = vae.encoder.mu[-1] + vae.encoder.sigma[-1]*N.sample([latent_dims])
     point = U.sample(sample_shape=[latent_dims])
     z = torch.Tensor(point)
@@ -59,7 +59,7 @@ for i in range(100):
     plt.imshow(x_hat[:, :], cmap='Greys')
     plt.title(f'Sampled point = {[np.round(x, 4) for x in list(point.detach().numpy())]}')
     plt.savefig(f'img/digits/{i}.png')
-    plt.close()
+    plt.close()'''
 
 plots.plot_latent(vae, data)
 plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))

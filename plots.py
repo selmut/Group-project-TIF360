@@ -13,7 +13,7 @@ def plot_reconstructed(autoencoder, r0=(-5, 10), r1=(-10, 5), n=12):
             x_hat = autoencoder.decoder(z)
             x_hat = x_hat.reshape(28, 28).detach().numpy()
             img[(n-1-i)*w:(n-1-i+1)*w, j*w:(j+1)*w] = x_hat
-    plt.imshow(img, extent=[*r0, *r1])
+    plt.imshow(img, extent=[*r0, *r1], cmap='Greys')
     plt.savefig('img/rec_vae.png')
     plt.close()
 
