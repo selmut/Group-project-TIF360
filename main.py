@@ -41,9 +41,14 @@ torch.save(vae, 'models/variational_autoencoder.pt')
 N = vae.encoder.N
 N_fit = vae.encoder.N_fit
 
+U = torch.distributions.Uniform(-3, 3)
+
 for i in range(100):
-    point = vae.encoder.mu[-1] + vae.encoder.sigma[-1]*N.sample([latent_dims])
-    z = torch.Tensor(point)
+    # point = vae.encoder.mu[-1] + vae.encoder.sigma[-1]*N.sample([latent_dims])
+    x1 = U.sample()
+    x2 = U.sample()
+
+    z = torch.Tensor([x1, x2])
     x_hat = vae.decoder(z)
     x_hat = x_hat.reshape((28, 28)).detach().numpy()
     plt.figure()
