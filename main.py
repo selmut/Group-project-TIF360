@@ -30,11 +30,15 @@ latent_dims = 2
 vae = VariationalAutoencoder(latent_dims)  # GPU
 
 print('Loading data...')
-data = torch.utils.data.DataLoader(
-        torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
-        batch_size=128, shuffle=True)
+'''data = torch.utils.data.DataLoader(
+        torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False).__getitem__(0),
+        batch_size=128, shuffle=True)'''
 
-print(data)
+dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
+
+indices = [idx for idx, target in enumerate(dataset.targets) if target in [9]]
+data = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, indices), batch_size=128, drop_last=True)
+
 
 print('\nTraining variational autoencoder...\n')
 vae = train_vae(vae, data)
@@ -57,8 +61,8 @@ for i in range(100):
     plt.savefig(f'img/digits/{i}.png')
     plt.close()
 
-# plots.plot_latent(vae, data)
-# plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
+plots.plot_latent(vae, data)
+plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
 
 
 
