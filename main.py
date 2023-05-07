@@ -7,27 +7,11 @@ import plots
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 import seaborn as sns
 
-from vaeClass import VariationalAutoencoder
-
-# Reference: https://avandekleut.github.io/vae/
-
-
-def train_vae(autoencoder, data, epochs=20):
-    opt = torch.optim.Adam(autoencoder.parameters())
-    for epoch in range(epochs):
-        for x, y in data:
-            opt.zero_grad()
-            x_hat = autoencoder(x)
-            loss = ((x - x_hat)**2).sum() + autoencoder.encoder.kl
-            loss.backward()
-            opt.step()
-
-        print(f'Epoch nr. {epoch+1:02d}/{epochs} --- Current training loss: {loss:.4f}')
-    return autoencoder
-
+from vaeClass import Network
 
 latent_dims = 2
-vae = VariationalAutoencoder(latent_dims)  # GPU
+net = Network(latent_dims)
+
 
 print('Loading data...')
 '''data = torch.utils.data.DataLoader(
@@ -41,11 +25,8 @@ data = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, indices), ba
 
 
 print('\nTraining variational autoencoder...\n')
-vae = train_vae(vae, data)
-torch.save(vae, 'models/variational_autoencoder.pt')
-
-N = vae.encoder.N
-N_fit = vae.encoder.N_fit
+net.train_vae(data)
+torch.save(net.vae, 'models/variational_autoencoder.pt')
 
 U = torch.distributions.Uniform(-3, 3)
 
@@ -61,8 +42,8 @@ U = torch.distributions.Uniform(-3, 3)
     plt.savefig(f'img/digits/{i}.png')
     plt.close()'''
 
-plots.plot_latent(vae, data)
-plots.plot_reconstructed(vae, r0=(-3, 3), r1=(-3, 3))
+plots.plot_latent(net.vae, data)
+plots.plot_reconstructed(net.vae, r0=(-3, 3), r1=(-3, 3))
 
 
 

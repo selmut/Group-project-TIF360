@@ -35,3 +35,24 @@ class VariationalAutoencoder(torch.nn.Module):
     def forward(self, x):
         z = self.encoder(x)
         return self.decoder(z)
+
+
+class Network:
+    def __init__(self, latent_dims):
+        self.latent_dims = latent_dims
+        self.vae = VariationalAutoencoder(self.latent_dims)
+        self.encoder = self.vae.encoder
+        self.decoder = self.vae.decoder
+
+    def train_vae(self, data, epochs=20):
+        opt = torch.optim.Adam(self.vae.parameters())
+        for epoch in range(epochs):
+            for x, y in data:
+                opt.zero_grad()
+                x_hat = self.vae(x)
+                loss = ((x - x_hat) ** 2).sum() + self.vae.encoder.kl
+                loss.backward()
+                opt.step()
+
+            print(f'Epoch nr. {epoch + 1:02d}/{epochs} --- Current training loss: {loss:.4f}')
+
