@@ -1,21 +1,25 @@
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import torch
 import torchvision
+from ClassGeneratedMNIST import MergedMNIST
 
-print('Loading data...')
-'''data = torch.utils.data.DataLoader(
-        torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False),
-        batch_size=128, shuffle=True)'''
+data = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
+
+merged = MergedMNIST('data/GeneratedMNIST/labels.csv', 'data/GeneratedMNIST/img')
+
+item = merged.__getitem__(0)
+img = item['image'].numpy().reshape((28, 28))
 
 dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
 
-indices = [idx for idx, target in enumerate(dataset.targets) if target in [0]]
-dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, indices), batch_size=128, drop_last=True)
+targets = [target for idx, target in enumerate(dataset.targets)]
+images = [img.flatten() for idx, img in enumerate(dataset.data)]
 
-for idx, batch in enumerate(dataloader):
-    print(batch[0].shape)
-    for elem in batch[0]:
-        plt.figure()
-        plt.imshow(elem.reshape((28, 28)))
-        plt.show()
-    break
+labels_df = pd.DataFrame(targets, columns=['label'])
+
+print(dataset.targets.shape)
+
+# dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, indices), batch_size=128, drop_last=True)
+
