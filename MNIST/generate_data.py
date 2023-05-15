@@ -12,7 +12,7 @@ print('Loading data...')
 dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
 
 gen = DataGenerator(dataset, latent_dims)
-gen.generate_new_dataset(output_size=60_000)
+gen.generate_new_dataset(output_size=60_00)
 
 
 
