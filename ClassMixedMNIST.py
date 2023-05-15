@@ -25,9 +25,9 @@ class MixedMNIST(Dataset):
             idx = idx.tolist()
 
         image = self.data[idx]
+        image = image.reshape(-1, *image.shape)
         label = self.targets[idx]
 
-        sample = {'image': image, 'label': label}
         return image, label
 
     def get_splitting_idxs(self):
@@ -39,9 +39,8 @@ class MixedMNIST(Dataset):
 
         split_idx = int(self.dataset_size*self.percentage_generated)
 
-        idxs_original = idxs_original[:split_idx]
+        idxs_original = idxs_original[split_idx:]
         idxs_generated = idxs_generated[:split_idx]
-
         return idxs_original, idxs_generated
 
     def get_split_datasets(self):
@@ -70,7 +69,7 @@ class MixedMNIST(Dataset):
         targets[:split_idx] = generated_targets_split
 
         # TODO: maybe shuffle data+targets?
-        return torch.tensor(data, dtype=torch.uint8), torch.tensor(targets, dtype=torch.uint8)
+        return torch.tensor(data, dtype=torch.float), torch.tensor(targets, dtype=torch.long)
 
 
 

@@ -73,7 +73,4 @@ class DataGenerator:
         labels_df['image_name'] = img_names
         labels_df.to_csv('data/GeneratedMNIST/labels.csv', index=False)
 
-    def save_new_dataset(self):
-        pass
-
 

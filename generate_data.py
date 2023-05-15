@@ -1,6 +1,3 @@
-import torch#; torch.manual_seed(0)
-import torch.nn as nn
-import torch.nn.functional as F
 import torchvision
 import numpy as np
 import plots
@@ -15,7 +12,7 @@ print('Loading data...')
 dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
 
 gen = DataGenerator(dataset, latent_dims)
-gen.generate_new_dataset(output_size=100)
+gen.generate_new_dataset(output_size=60_000)
 
 
 
