@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 import torch
-
 from ClassGeneratedMNIST import GeneratedMNIST
 import torchvision
 from torch.utils.data import Dataset
