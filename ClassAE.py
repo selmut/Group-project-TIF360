@@ -1,6 +1,5 @@
 import torch
 
-
 class Encoder(torch.nn.Module):
     def __init__(self, latent_dims):
         super(Encoder, self).__init__()

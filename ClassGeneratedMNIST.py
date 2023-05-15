@@ -5,7 +5,6 @@ from torch.utils.data import Dataset
 from torchvision import io
 import torch
 
-
 class GeneratedMNIST(Dataset):
     def __init__(self, csv_file, img_dir):
         self.labels_frame = pd.read_csv(csv_file)
