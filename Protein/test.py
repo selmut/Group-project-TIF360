@@ -1,22 +1,15 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+from torchvision import io
 import torch
-import torchvision
-from ClassGeneratedMNIST import GeneratedMNIST
-from ClassMixedMNIST import MixedMNIST
+from PIL import Image
+from ClassProteinData import ProteinData
 
-mixed = MixedMNIST()
-dataloader = torch.utils.data.DataLoader(MixedMNIST(), batch_size=128, shuffle=True)
+data = ProteinData('data/Original/human-protein-atlas-image-classification/single_target_files.csv',
+                   'data/Original/human-protein-atlas-image-classification/train/')
 
-train_features, train_labels = next(iter(dataloader))
+for n in range(100):
+    img, label = data.__getitem__(n)
 
-for idx in range(10):
-    plt.figure()
-    plt.imshow(train_features[idx])
-    plt.show()
-
-    print(train_labels[idx])
-
-
+    pil_img = Image.fromarray(img.numpy().astype(np.uint8), mode='RGB')
+    pil_img.save(f'img/all_channels{n}.png')
 

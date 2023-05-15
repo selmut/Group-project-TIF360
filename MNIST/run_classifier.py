@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 import torchvision
 from torch.autograd import Variable
-from classifier import Classifier
-from classifier import TestModel
+from ClassClassifier import Classifier
+from ClassClassifier import TestModel
 from ClassMixedMNIST import MixedMNIST
 
 n = 20
