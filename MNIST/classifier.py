@@ -64,12 +64,12 @@ class TestModel:
                     print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                           .format(epoch + 1, self.num_epochs, i + 1, total_step, loss.item()))
 
-    def test(self, loaders):
+    def test(self):
         # Test the model
         self.cnn.eval()
         accuracies = []
         with torch.no_grad():
-            for images, labels in loaders['test']:
+            for images, labels in self.test_loader:
                 test_output, last_layer = self.cnn(images)
                 pred_y = torch.max(test_output, 1)[1].data.squeeze()
                 accuracy = (pred_y == labels).sum().item() / float(labels.size(0))
