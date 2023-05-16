@@ -1,20 +1,19 @@
-import matplotlib.pyplot as plt
-import numpy
 import numpy as np
 import torch
-from ClassGeneratedMNIST import GeneratedMNIST
+from MNIST.CustomDatasets.ClassGeneratedMNIST import GeneratedMNIST
 import torchvision
 from torch.utils.data import Dataset
 
 
 class MixedMNIST(Dataset):
-    def __init__(self, dataset_size=1_000, percentage_generated=0.5):
+    def __init__(self, dataset_size=1_000, percentage_generated=0.5, deterministic=False):
         self.original_dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(),
                                                            download=False)
-        self.generated_dataset = GeneratedMNIST('data/GeneratedMNIST/labels.csv', 'data/GeneratedMNIST/img')
+        self.generated_dataset = GeneratedMNIST('../data/GeneratedMNIST/labels.csv', 'data/GeneratedMNIST/img')
         self.percentage_generated = percentage_generated
         self.dataset_size = dataset_size
         self.data, self.targets = self.get_merged_dataset()
+        self.deterministic = deterministic
 
     def __len__(self):
         return self.dataset_size
@@ -33,8 +32,9 @@ class MixedMNIST(Dataset):
         idxs_original = np.array(list(range(self.original_dataset.__len__())))
         idxs_generated = np.array(list(range(self.generated_dataset.__len__())))
 
-        np.random.shuffle(idxs_original)
-        np.random.shuffle(idxs_generated)
+        if not self.deterministic:
+            np.random.shuffle(idxs_original)
+            np.random.shuffle(idxs_generated)
 
         split_idx = int(self.dataset_size*self.percentage_generated)
 

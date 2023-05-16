@@ -4,23 +4,23 @@ import pandas as pd
 import torch
 from ClassClassifier import Classifier
 from ClassClassifier import TestModel
-from ClassMixedMNIST import MixedMNIST
+from MNIST.CustomDatasets.ClassMixedMNIST import MixedMNIST
 
-n = 20
+n = 10
 n_reals = 1
 percentages = np.linspace(0, 1, num=n)
 accuracies = np.zeros((n_reals, n))
-nr_sampels = 60_000
+nr_samples = 60_000
 lr = 0.005
 nr_epochs = 10
 
 for n in range(n_reals):
     for idx, p in enumerate(percentages):
         print(f'\nGenerated data percentage: {p}')
-        original_data = MixedMNIST(dataset_size=nr_sampels, percentage_generated=0)
+        original_data = MixedMNIST(dataset_size=nr_samples, percentage_generated=0)
         original_train, original_test = torch.utils.data.random_split(original_data, [50_000, 10_000])
 
-        mix_data = MixedMNIST(dataset_size=nr_sampels, percentage_generated=p)
+        mix_data = MixedMNIST(dataset_size=nr_samples, percentage_generated=p)
         mix_train, mix_test = torch.utils.data.random_split(mix_data, [50_000, 10_000])
 
         train_loader = torch.utils.data.DataLoader(mix_train, batch_size=128, shuffle=True)
