@@ -11,10 +11,12 @@ nr_samples = 10_000
 
 print('Loading data...')
 dataset = torchvision.datasets.MNIST('./data', transform=torchvision.transforms.ToTensor(), download=False)
-split1, split2 = torch.utils.data.random_split(dataset, [nr_samples, 60_000-nr_samples])
 
+
+print(dataset.targets)
+split1, split2 = torch.utils.data.random_split(dataset, [nr_samples, 60_000-nr_samples])
 gen = DataGenerator(split1, latent_dims)
-gen.generate_new_dataset(output_size=6_000)
+gen.generate_new_dataset(output_size=60_000)
 
 
 
