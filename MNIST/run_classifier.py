@@ -2,15 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
-import torchvision
-from torch.autograd import Variable
 from ClassClassifier import Classifier
 from ClassClassifier import TestModel
 from ClassMixedMNIST import MixedMNIST
 
 n = 20
-n_reals = 10
+n_reals = 1
 percentages = np.linspace(0, 1, num=n)
 accuracies = np.zeros((n_reals, n))
 nr_sampels = 60_000

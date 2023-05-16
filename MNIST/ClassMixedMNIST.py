@@ -27,7 +27,7 @@ class MixedMNIST(Dataset):
         image = image.reshape(-1, *image.shape)
         label = self.targets[idx]
 
-        return image, label
+        return image/255, label
 
     def get_splitting_idxs(self):
         idxs_original = np.array(list(range(self.original_dataset.__len__())))
