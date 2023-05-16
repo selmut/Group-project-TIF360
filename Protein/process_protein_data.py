@@ -35,8 +35,8 @@ for item in range(len(ids)):
     yellow = torch.tensor(yellow, dtype=torch.uint8).numpy()[0]
     green = torch.tensor(green, dtype=torch.uint8).numpy()[0]
 
-    green = np.add(yellow, green)
-    red = np.add(yellow, red)
+    '''green = np.add(yellow, green)
+    red = np.add(yellow, red)'''
 
     image = np.zeros((512, 512, 3))
     image[:, :, 0] = red
