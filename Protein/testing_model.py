@@ -3,9 +3,8 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-import torchvision
 from torch.autograd import Variable
-from ClassMixedMNIST import MixedMNIST
+from Protein.CustomDatasets.ClassMixedMNIST import MixedMNIST
 
 
 class TestModel(nn.Module):

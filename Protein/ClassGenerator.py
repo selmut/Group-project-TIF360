@@ -4,18 +4,17 @@ import pandas as pd
 from PIL import Image
 from torchvision import io
 import PIL
-
 import plots
 from ClassVAE import VariationalAutoencoder
 
 
 class DataGenerator:
-    def __init__(self, dataset, latent_dims):
+    def __init__(self, dataset, latent_dims, img_dim):
         self.dataset = dataset
-        self.labels = set(dataset.targets.numpy())
+        self.labels = set(dataset.targets)
 
         self.latent_dims = latent_dims
-        self.vae = VariationalAutoencoder(self.latent_dims)
+        self.vae = VariationalAutoencoder(self.latent_dims, img_dim)
         self.encoder = self.vae.encoder
         self.decoder = self.vae.decoder
 
