@@ -44,4 +44,4 @@ for item in range(len(ids)):
     image[:, :, 2] = blue
 
     pil_img = Image.fromarray(image.astype(np.uint8), mode='RGB')
-    pil_img.save(reduced_train_dir+f'{ids.iloc[item]}.png')
+    pil_img.save(reduced_train_dir+f'all_channels{item}.png')
