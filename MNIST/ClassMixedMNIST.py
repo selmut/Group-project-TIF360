@@ -1,9 +1,6 @@
-import matplotlib.pyplot as plt
-import numpy
 import numpy as np
 import torch
-
-from ClassGeneratedMNIST import GeneratedMNIST
+from MNIST.ClassGeneratedMNIST import GeneratedMNIST
 import torchvision
 from torch.utils.data import Dataset
 
@@ -28,14 +25,14 @@ class MixedMNIST(Dataset):
         image = image.reshape(-1, *image.shape)
         label = self.targets[idx]
 
-        return image, label
+        return image/255, label
 
     def get_splitting_idxs(self):
         idxs_original = np.array(list(range(self.original_dataset.__len__())))
         idxs_generated = np.array(list(range(self.generated_dataset.__len__())))
 
-        np.random.shuffle(idxs_original)
-        np.random.shuffle(idxs_generated)
+        '''np.random.shuffle(idxs_original)
+        np.random.shuffle(idxs_generated)'''
 
         split_idx = int(self.dataset_size*self.percentage_generated)
 

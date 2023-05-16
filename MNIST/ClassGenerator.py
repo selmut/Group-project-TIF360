@@ -6,7 +6,7 @@ from torchvision import io
 import PIL
 
 import plots
-from ClassVAE import VariationalAutoencoder
+from ClassConvVAE import VariationalAutoencoder
 
 
 class DataGenerator:
@@ -21,13 +21,13 @@ class DataGenerator:
 
     def get_data_by_label(self, label):
         indices = [idx for idx, target in enumerate(self.dataset.targets) if target in [label]]
-        dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(self.dataset, indices), batch_size=128, drop_last=True)
+        dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(self.dataset, indices), batch_size=32, drop_last=True)
         return dataloader
 
     def train_network(self, dataloader, epochs=20):
         opt = torch.optim.Adam(self.vae.parameters())
         for epoch in range(epochs):
-            for x, y in dataloader:
+            for idx, (x, y) in enumerate(dataloader):
                 opt.zero_grad()
                 x_hat = self.vae(x)
                 loss = ((x - x_hat) ** 2).sum() + self.vae.encoder.kl
@@ -51,11 +51,12 @@ class DataGenerator:
             self.train_network(dataloader)
 
             U = torch.distributions.Uniform(-2, 2)
+
             for i in range(output_size):
-                point = U.sample(sample_shape=[self.latent_dims])
+                point = U.sample(sample_shape=[32, self.latent_dims])
                 z = torch.Tensor(point)
                 x_hat = self.vae.decoder(z)
-                x_hat = x_hat.reshape((img_dim, img_dim)).detach().numpy()
+                x_hat = x_hat.reshape((32, img_dim, img_dim)).detach().numpy()[0]
 
                 x_hat_scaled = (((x_hat[:, :] - x_hat[:, :].min()) / (x_hat[:, :].max() - x_hat[:, :].min())) * 255.9).astype(np.uint8)
                 img = Image.fromarray(x_hat_scaled)

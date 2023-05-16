@@ -11,6 +11,8 @@ class ProteinData(Dataset):
         self.labels = pd.read_csv(csv_file)['Target']
         self.img_dir = img_dir
 
+        self.targets = self.get_targets()
+
     def __len__(self):
         return len(self.ids)
 
@@ -28,11 +30,16 @@ class ProteinData(Dataset):
         green = np.add(yellow, green)
         red = np.add(yellow, red)
 
-        image = np.zeros((512, 512, 3))
-        image[:, :, 0] = red
-        image[:, :, 1] = green
-        image[:, :, 2] = blue
+        image = np.zeros((3, 512, 512))
+        image[0, :, :] = red/255
+        image[1, :, :] = green/255
+        image[2, :, :] = blue/255
 
-        return torch.tensor(image), self.labels.iloc[item]
+        return torch.tensor(image, dtype=torch.float), torch.tensor(self.labels.iloc[item], dtype=torch.long)
 
+    def get_targets(self):
+        targets = np.zeros(self.__len__())
+        for n in range(self.__len__()):
+            targets[n] = self.labels[n]
 
+        return targets
