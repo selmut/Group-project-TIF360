@@ -1,7 +1,7 @@
 import torchvision
 import matplotlib.pyplot as plt; plt.rcParams['figure.dpi'] = 200
 from ClassGenerator import DataGenerator
-from MNIST.CustomDatasets.ClassMixedMNIST import MixedMNIST
+from MNIST.ClassMixedMNIST import MixedMNIST
 
 latent_dims = 8
 nr_samples = 60_000

@@ -1,5 +1,5 @@
-from CustomDatasets.ClassSampledMNIST import SampledMNIST
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-dataset = SampledMNIST(10_000)
 
-print(dataset.__getitem__(0))

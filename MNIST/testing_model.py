@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from MNIST.CustomDatasets.ClassMixedMNIST import MixedMNIST
+from MNIST.ClassMixedMNIST import MixedMNIST
 
 
 class TestModel(nn.Module):

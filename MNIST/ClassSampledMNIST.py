@@ -27,7 +27,7 @@ class SampledMNIST(Dataset):
         return image/255, label
 
     def get_samples_from_pool(self):
-        indexes = list(range(self.sample_pool_size))
+        indexes = list(range(int(self.sample_pool_size)))
         subset_of_original = Subset(self.original_dataset, indexes)
         sampled_indexes = RandomSampler(subset_of_original, num_samples=self.dataset_size, replacement=True)
 
@@ -38,5 +38,5 @@ class SampledMNIST(Dataset):
             sampled_data[i] = self.original_dataset.data[sample_idx]
             sampled_labels[i] = self.original_dataset.targets[sample_idx]
 
-        return sampled_data, sampled_labels
+        return torch.tensor(sampled_data, dtype=torch.float), torch.tensor(sampled_labels, dtype=torch.long)
 
