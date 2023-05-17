@@ -20,7 +20,7 @@ ids = labels_frame['Id']
 labels_frame['Filename'] = [f'all_channels{item}.png' for item in list(range(len(ids)))]
 labels_frame.to_csv(data_dir+'/single_target_files.csv', index=None)
 
-reduced_train_dir = data_dir + '/train_reduced/'
+reduced_train_dir = data_dir + '/train_rb/'  # '/train_reduced/'
 
 print(len(labels_frame))
 
@@ -35,16 +35,17 @@ for key in keys:
 counts_dict = dict(zip(keys, counts))
 print(counts_dict)
 
-'''for item in range(len(ids)):
+for item in range(len(ids)):
     red = io.read_image(train_dir + ids.iloc[item] + '_red.png')
-    green = io.read_image(train_dir + ids.iloc[item] + '_green.png')
+    # green = io.read_image(train_dir + ids.iloc[item] + '_green.png')
     blue = io.read_image(train_dir + ids.iloc[item] + '_blue.png')
     yellow = io.read_image(train_dir + ids.iloc[item] + '_yellow.png')
 
     blue = torch.tensor(blue, dtype=torch.uint8).numpy()[0]
     red = torch.tensor(red, dtype=torch.uint8).numpy()[0]
     yellow = torch.tensor(yellow, dtype=torch.uint8).numpy()[0]
-    green = torch.tensor(green, dtype=torch.uint8).numpy()[0]
+    # green = torch.tensor(green, dtype=torch.uint8).numpy()[0]
+    green = torch.zeros(blue.shape)
 
     #green = np.add(yellow, green)
     #red = np.add(yellow, red)
@@ -55,4 +56,4 @@ print(counts_dict)
     image[:, :, 2] = blue
 
     pil_img = Image.fromarray(image.astype(np.uint8), mode='RGB')
-    pil_img.save(reduced_train_dir+f'all_channels{item}.png')'''
+    pil_img.save(reduced_train_dir+f'all_channels{item}.png')

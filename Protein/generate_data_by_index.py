@@ -1,17 +1,15 @@
-import numpy as np
 import torch
-import torch.nn as nn
-from torchvision import io
-import torchvision.transforms as T
-from PIL import Image
-from ClassConvVAE import VariationalAutoencoder
+import numpy as np
 import pandas as pd
+import torchvision.transforms as T
 from CustomDatasets.ClassProteinData import ProteinData
 
 img_size = 256
+output_size = 10
 latent_dim = 20
-epochs = 2
+epochs = 10
 bs = 128
+label = 0
 
 data_dir = 'data/Original/human-protein-atlas-image-classification'
 train_dir = data_dir + '/train_reduced/'
@@ -22,20 +20,18 @@ tfms_back = T.Compose([T.ToPILImage()])
 
 dataset = ProteinData(data_dir+'/single_target_files.csv',
                       train_dir, transform=tfms)
+labels = set(dataset.targets)
+indices = [idx for idx, target in enumerate(dataset.targets) if target in [label]]
+dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(dataset, indices), batch_size=bs, drop_last=True,
+                                         shuffle=True)
 
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True)
+vae = torch.load(f'models/variational_autoencoder_general{0}.pt')
 
-vae = VariationalAutoencoder(latent_dim)
-
-opt = torch.optim.Adam(vae.parameters())
 lrs = np.linspace(0.003, 0.0001, num=len(dataloader)*epochs)
 n = 0
-
-last_epoch = 0
-
 for epoch in range(epochs):
     for idx, (x, y) in enumerate(dataloader):
-        opt = torch.optim.Adam(vae.parameters(), lr=lrs[n])  # , amsgrad=True)
+        opt = torch.optim.Adam(vae.parameters(), lr=lrs[n], amsgrad=True)
         opt.zero_grad()
         x_hat = vae(x)
         loss = ((x - x_hat) ** 2).sum() + vae.encoder.kl
@@ -46,15 +42,9 @@ for epoch in range(epochs):
         n += 1
 
     print(f'\nEpoch nr. {epoch + 1:02d}/{epochs} --- Current training loss: {loss:.4f}')
-    last_epoch = epoch
-    torch.save(vae, f'models/variational_autoencoder_general{epoch}.pt')
-
-vae = torch.load(f'models/variational_autoencoder_general{last_epoch}.pt')
-output_size = 10
+torch.save(vae, f'models/variational_autoencoder_label{label}.pt')
 
 to_pil = T.ToPILImage()
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True)
-
 U = torch.distributions.Uniform(-2, 2)
 for i in range(output_size):
     point = U.sample(sample_shape=[bs, latent_dim])
@@ -65,4 +55,3 @@ for i in range(output_size):
     img = to_pil(x_hat)
 
     img.save(f'data/Generated/img/general_{i}.png')
-
