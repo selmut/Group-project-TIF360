@@ -11,31 +11,37 @@ from ClassResnetVAE import ResNetVAE
 
 
 class DataGenerator:
-    def __init__(self, dataset, latent_dims):
+    def __init__(self, dataset, latent_dims, in_channels):
         self.dataset = dataset
         self.labels = set(dataset.targets)
 
         self.latent_dims = latent_dims
-        self.vae = VariationalAutoencoder(self.latent_dims)
+        self.vae = VariationalAutoencoder(self.latent_dims, in_channels)
         self.encoder = self.vae.encoder
         self.decoder = self.vae.decoder
 
     def get_data_by_label(self, label):
         indices = [idx for idx, target in enumerate(self.dataset.targets) if target in [label]]
-        dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(self.dataset, indices), batch_size=128, drop_last=True)
+        dataloader = torch.utils.data.DataLoader(torch.utils.data.Subset(self.dataset, indices), batch_size=128,
+                                                 drop_last=True, shuffle=True)
         return dataloader
 
     def train_network(self, dataloader, epochs=20):
-        opt = torch.optim.Adam(self.vae.parameters())
+        n = 0
         for epoch in range(epochs):
+            losses = np.zeros(len(dataloader))
+            lrs = np.linspace(0.001, 0.0001, num=epochs)
             for idx, (x, y) in enumerate(dataloader):
-                print(f'Batch nr. {idx+1}/{len(dataloader)}')
+                opt = torch.optim.Adam(self.vae.parameters(), amsgrad=True, lr=lrs[n])
                 opt.zero_grad()
                 x_hat = self.vae(x)
                 loss = ((x - x_hat) ** 2).sum() + self.vae.encoder.kl
                 loss.backward()
                 opt.step()
-            print(f'\nEpoch nr. {epoch + 1:02d}/{epochs} --- Current training loss: {loss:.4f}')
+                losses[idx] = loss
+                print(f'Batch nr. {idx + 1}/{len(dataloader)} --- Current batch loss: {loss:.4f}')
+            n += 1
+            print(f'\nEpoch nr. {epoch + 1:02d}/{epochs} --- Current avg. batch loss: {np.mean(losses):.4f}')
 
     def train_resnet(self, dataloader, epochs=20):
         self.vae = ResNetVAE(CNN_embed_dim=8)

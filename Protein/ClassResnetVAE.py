@@ -21,9 +21,9 @@ class ResNetVAE(nn.Module):
         modules = list(resnet.children())[:-1]      # delete the last fc layer.
         self.resnet = nn.Sequential(*modules)
         self.fc1 = nn.Linear(resnet.fc.in_features, self.fc_hidden1)
-        self.bn1 = nn.BatchNorm1d(self.fc_hidden1, momentum=0.01)
+        self.bn1 = nn.BatchNorm1d(self.fc_hidden1, momentum=0.1)
         self.fc2 = nn.Linear(self.fc_hidden1, self.fc_hidden2)
-        self.bn2 = nn.BatchNorm1d(self.fc_hidden2, momentum=0.01)
+        self.bn2 = nn.BatchNorm1d(self.fc_hidden2, momentum=0.1)
         # Latent vectors mu and sigma
         self.fc3_mu = nn.Linear(self.fc_hidden2, self.CNN_embed_dim)      # output = CNN embedding latent variables
         self.fc3_logvar = nn.Linear(self.fc_hidden2, self.CNN_embed_dim)  # output = CNN embedding latent variables
@@ -39,20 +39,20 @@ class ResNetVAE(nn.Module):
         self.convTrans6 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=self.k4, stride=self.s4,
                                padding=self.pd4),
-            nn.BatchNorm2d(32, momentum=0.01),
+            nn.BatchNorm2d(32, momentum=0.1),
             nn.ReLU(inplace=True),
         )
         self.convTrans7 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=32, out_channels=8, kernel_size=self.k3, stride=self.s3,
                                padding=self.pd3),
-            nn.BatchNorm2d(8, momentum=0.01),
+            nn.BatchNorm2d(8, momentum=0.1),
             nn.ReLU(inplace=True),
         )
 
         self.convTrans8 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=self.k2, stride=self.s2,
                                padding=self.pd2),
-            nn.BatchNorm2d(3, momentum=0.01),
+            nn.BatchNorm2d(3, momentum=0.1),
             nn.Sigmoid()    # y = (y1, y2, y3) \in [0 ,1]^3
         )
 
@@ -83,7 +83,7 @@ class ResNetVAE(nn.Module):
         x = self.convTrans6(x)
         x = self.convTrans7(x)
         x = self.convTrans8(x)
-        x = F.interpolate(x, size=(128, 128), mode='bilinear')
+        x = F.interpolate(x, size=(256, 256), mode='bilinear')
         return x
 
     def forward(self, x):

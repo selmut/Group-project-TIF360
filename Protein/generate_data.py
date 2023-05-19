@@ -12,7 +12,7 @@ train_dir = data_dir + '/train_reduced/'
 labels_frame = pd.read_csv(data_dir+'/single_target_files.csv')
 
 img_size = 256
-latent_dims = 20
+latent_dims = 10
 epochs = 10
 
 tfms = T.Compose([T.CenterCrop(img_size), T.PILToTensor(), T.ConvertImageDtype(dtype=torch.float)])
@@ -23,7 +23,7 @@ dataset = ProteinData(data_dir+'/single_target_files.csv',
                       train_dir, transform=tfms)
 
 gen = DataGenerator(dataset, latent_dims)
-loader = gen.generate_new_dataset(100)
+loader = gen.generate_new_dataset(10)
 
 '''vae = VariationalAutoencoder(latent_dims)
 opt = torch.optim.Adam(vae.parameters())

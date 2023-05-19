@@ -20,7 +20,7 @@ class ProteinData(Dataset):
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
         img_id, label = row['Filename'], row['Target']
-        img_path = self.img_dir + "/" + str(img_id)
+        img_path = self.img_dir + "/" + str(img_id)  # + '_green.png'
         img = Image.open(img_path)
 
         if self.transform:

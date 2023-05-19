@@ -9,12 +9,12 @@ import pandas as pd
 from CustomDatasets.ClassProteinData import ProteinData
 
 img_size = 256
-latent_dim = 20
+latent_dim = 10
 epochs = 2
 bs = 128
 
 data_dir = 'data/Original/human-protein-atlas-image-classification'
-train_dir = data_dir + '/train_reduced/'
+train_dir = data_dir + '/train_rb/'
 labels_frame = pd.read_csv(data_dir+'/single_target_files.csv')
 
 tfms = T.Compose([T.CenterCrop(img_size), T.PILToTensor(), T.ConvertImageDtype(dtype=torch.float)])
@@ -23,19 +23,20 @@ tfms_back = T.Compose([T.ToPILImage()])
 dataset = ProteinData(data_dir+'/single_target_files.csv',
                       train_dir, transform=tfms)
 
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True)
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True, shuffle=True)
 
 vae = VariationalAutoencoder(latent_dim)
 
 opt = torch.optim.Adam(vae.parameters())
-lrs = np.linspace(0.003, 0.0001, num=len(dataloader)*epochs)
+lrs = np.linspace(0.0005, 0.0001, num=len(dataloader)*epochs)
+
 n = 0
 
 last_epoch = 0
 
 for epoch in range(epochs):
     for idx, (x, y) in enumerate(dataloader):
-        opt = torch.optim.Adam(vae.parameters(), lr=lrs[n])  # , amsgrad=True)
+        opt = torch.optim.Adam(vae.parameters(), lr=lrs[n], amsgrad=True)
         opt.zero_grad()
         x_hat = vae(x)
         loss = ((x - x_hat) ** 2).sum() + vae.encoder.kl
@@ -53,7 +54,7 @@ vae = torch.load(f'models/variational_autoencoder_general{last_epoch}.pt')
 output_size = 10
 
 to_pil = T.ToPILImage()
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True)
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=bs, drop_last=True, shuffle=True)
 
 U = torch.distributions.Uniform(-2, 2)
 for i in range(output_size):
